@@ -1,0 +1,11 @@
+*.chip8
+*.ch8
+*.c8
+chip8
+c8asm
+test
+a.out
+asm
+*peda*
+.gdb_history
+*ccls

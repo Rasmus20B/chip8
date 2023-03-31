@@ -1,0 +1,25 @@
+.TH CHIP8 1 
+.SH NAME
+ Chip8 \- A Chip8 Virtual Machine Emulator in C
+.SH SYNOPSIS
+.B chip8 
+[\fB\-r\fR \fIFILE\fR]
+
+.B chip8 
+[\fB\-d\fR \fIFILE\fR]
+.SH DESCRIPTION
+.I Chip8 
+Is a command line Chip8 virtual machine emalator which can run, as well as disassemble chip8 machine code.
+.PP
+The emalator will load in a file, start the library, and start running the chip8 code supplied.
+.PP
+The Disassembler on the other hand will go through each opcode inside the file it has been supplied with, and read back a pneumonic assembly langauge output.
+.SH OPTIONS
+.TP
+.BR \-r "\t" \fIFILE\fR
+Set the mode of operation to RUN, causing the interpreter to run the code in the file through the emulator.
+.TP
+.BR \-d "\t" \fIFILE\fR
+Set the mode of operation to DISASSEMBLE, causing the interpreter to output pneumonic code from a chip8 machine code binary.
+.SH "SEE ALSO"
+c8asm(1)

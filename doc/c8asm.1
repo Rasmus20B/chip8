@@ -1,0 +1,121 @@
+.TH C8ASM 1 
+.SH NAME
+ C8ASM \- An assembler to generate code for the Chip8 Virtual Machine 
+.SH SYNOPSIS
+.B c8asm 
+[\fIFILE\fR]
+
+.SH DESCRIPTION
+C8asm is an assembler that translates pneumonic code into machine code to be read by a chip8 virtual machine.
+.PP
+The assembler will load in a file and translate line by line and output the machine code, which can be redirected to a file. If errors are found no code will be output. 
+.PP
+.SH LANGUAGE INSTRUCTIONS 
+.TP
+.B CLS \fIn/a\fR
+\tClears the display.
+.TP
+.B RET \fIn/a\fR
+\tReturn from a subroutine. Set program counter to address at top of stack, the decrement stack pointer. 
+.TP
+.B JMP \fILABEL\fR
+\tJump to address represented by \fILABEL\fR. Program counter is set to address.
+.TP
+.B CALL \fILABEL\fR
+\tJump to address represented by \fILABEL\fR after storing program counter in stack. To be used with 
+.B RET
+.TP
+.B SKE \fIREGISTER,INTEGER\fR
+Compare the value inside \fIREGISTER\fR given with \fIINTEGER\fR given. If equal, will skip the next instruction.
+.TP
+.B SKNE \fIREGISTER,INTEGER\fR
+Compare the value inside \fIREGISTER\fR given with \fIINTEGER\fR given. If equal, will NOT skip the next instruction.
+.TP
+.B SKRE \fIREGISTER,REGISTER\fR
+Compare the value inside first \fIREGISTER\fR with second \fIREGISTER\fR. If equal, will skip next instruction.
+.TP
+.B LOAD \fIREGISTER,INTEGER\fR
+Puts the value of \fIINTEGER\fR into \fIREGISTER\fR.
+.TP
+.B ADD  \fIREGISTER,INTEGER\fR
+Add \fIINTEGER\fR to value of \fIREGISTER\fR.
+.TP
+.B MOVE  \fIREGISTER,REGISTER\fR
+Stores the value of second \fIREGISTER\fR in first \fIREGISTER\fR.
+.TP
+.B OR \fIREGISTER,REGISTER\fR
+Bitwise OR the values inside each \fIREGISTER\fR and store result in first \fIREGISTER\fR.
+.TP
+.B AND \fIREGISTER,REGISTER\fR
+Bitwise AND the values inside each \fIREGISTER\fR and store result in first \fIREGISTER\fR.
+.TP
+.B XOR \fIREGISTER,REGISTER\fR
+Bitwise XOR the values inside each \fIREGISTER\fR and store result in first \fIREGISTER\fR.
+.TP
+.B ADDR \fIREGISTER,REGISTER\fR
+Add the value of both registers and store result in the first \fIREGISTER\fR.
+.TP
+.B SUB \fIREGISTER,REGISTER\fR
+Minus the value of the second \fIREGISTER\fR from the first and store result in the first \fIREGISTER\fR. If first \fIREGISTER\fR is larger than second, set register 15 to 1, otherwise 0.
+.TP
+.B SHR \fIREGISTER,REGISTER\fR
+If the least-significant bit of \fIREGISTER\fR is 1, then register 15 is set to 1, otherwise 0. Then \fIREGISTER\fR is divided by 2.
+.TP
+.B SUBR \fIREGISTER,REGISTER\fR
+Minus the value of the second \fIREGISTER\fR from the first and store result in the first \fIREGISTER\fR. If second \fIREGISTER\fR is larger than first, set register 15 to 1, otherwise 0.
+.TP
+.B SHL \fIREGISTER,REGISTER\fR
+If the most-significant bit of \fIREGISTER\fR is 1, then register 15 is set to 1, otherwise 0. Then multiply \fIREGISTER\fR by 2.
+.TP
+.B SKRNE \fIREGISTER,REGISTER\fR
+Compare both \fREGISTER\fRs. Skip next instruction if both do NOT have equal value.
+.TP
+.B LOADI \fIINTEGER\fR
+Set value of register I to \fIINTEGER\fR.
+.TP
+.B JUMPI \fIINTEGER\fR
+Set program counter to \fIINTEGER\fR + register 0.
+.TP
+.B RAND \fIREGISTER,INTEGER\fR
+AND randomly generated number with \fIINTEGER\fR and store result in \fIREGISTER\fR.
+.TP
+.B DRAW \fIREGISTER,REGISTER,INTEGER\fR
+Display \fIINTEGER\fR size sprite starting at memory location I at (first \fIREGISTER\fR, second \fIREGISTER\fR 2), set register 15 = collision.
+
+The interpreter reads \fIInteger\fR bytes from memory, starting at I. These bytes are then displayed as sprites on screen at coordinates (first \fIREGISTER\fR, second \fIREGISTER\fR). Sprites are XORed onto the existing screen. If this causes any pixels to be erased, Register 15 is set to 1, otherwise it is set to 0. If the sprite is positioned so part of it is outside the coordinates of the display, it wraps around to the opposite side of the screen. 
+.TP
+.B SKPR \fIREGISTER\fR
+Skip next instruction if the key with the value stored inside \fIREGISTER\fR is pressed.
+.TP
+.B SKUP \fIREGISTER\fR
+Skip next instruction if the key with the value stored inside \fIREGISTER\fR is NOT pressed.
+.TP
+.B MOVED \fIREGISTER\fR
+Set \fIREGISTER\fR to value of delay timer.
+.TP
+.B KEYD \fIREGISTER\fR
+Wait for keypress, then store value of key pressed in \fIREGISTER\fR.
+.TP
+.B LOADD \fIREGISTER\fR
+Set display timer to value in \fIREGISTER\fR.
+.TP
+.B LOADS \fIREGISTER\fR
+Set sound timer to value in \fIREGISTER\fR.
+.TP
+.B ADDI \fIREGISTER\fR
+Set I to I + value in \fIREGISTER\fR.
+.TP
+.B LDSPR \fIREGISTER\fR
+Set I to location of sprite for digit in \fIREGISTER\fR.
+.TP
+.B BCD \fIREGISTER\fR
+Store BCD representation of \fIREGISTER\fR in memory. I = hundreds digit. I+1 = tens digit. I+2 = ones digit. 
+.TP
+.B STOR \fIREGISTER\fR
+Store all registers from 0 to \fIREGISTER\fR in memory starting at address I.
+.TP
+.B READ \fIREGISTER\fR
+Reads into registers 0 to \fIREGISTER\fR the contents of memory starting at address I.
+
+.SH "SEE ALSO"
+chip8(1)
