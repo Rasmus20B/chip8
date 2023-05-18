@@ -97,6 +97,7 @@ uint8_t fetch_execute(uint8_t mode) {
 		exit(0);
 	}
 
+
 	uint8_t (*opcodes_base[20])(void) = { &opcodes_0, &jump, &call, &ske, 
 		&skne, &skre, &load, &add, &opcodes_8, &skrne, &loadi, &jumpi, 
 		&rnd, &drw, &opcodes_e, &opcodes_f  };
@@ -205,7 +206,7 @@ int main(int argc, char **argv) {
 		fetch_execute(mode);
 		/* e is the SDL2 event */
 		SDL_Event e;
-		while(SDL_WaitEvent(&e)) {
+		while(SDL_PollEvent(&e)) {
 			if(e.type == SDL_QUIT) exit(0);
 
 			/* if a event is a keypress */

@@ -1,3 +1,5 @@
+#ifndef CPU_H
+#define CPU_H
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
@@ -604,3 +606,4 @@ static inline uint8_t opcodes_f() {
 	(*opcodes[((opcode & 0x00FF) + 7) >> 3])();
 	return 0; 
 }
+#endif
