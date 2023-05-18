@@ -3,6 +3,7 @@
 *.c8
 chip8
 c8asm
+.cache
 test
 a.out
 asm
