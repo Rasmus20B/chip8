@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)  # CMake version check
 project(idtd C)               # Create project "simple_example"
-set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -pedantic")
+set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -march=native")
 
 # Add main.cpp file of project root directory as source file
 set(ASM_SOURCE_FILES 

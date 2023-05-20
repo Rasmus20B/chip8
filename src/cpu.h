@@ -5,7 +5,8 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 #ifdef __x86_64__
-   #include <immintrin.h>
+  #include <immintrin.h>
+  #include <emmintrin.h>
 #elif __arm64__ || __arm__
   #include <arm_neon.h>
 #endif

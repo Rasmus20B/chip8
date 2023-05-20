@@ -767,24 +767,34 @@ int main(int argc, char **argv) {
       /* set draw to false for next cycle */
 			draw = false;
 			/* calculate new pixel layout */
+      #ifdef __arm64__
 			for(int x = 0; x < 2048; x+=4) {
-        #ifdef __arm64__
-        uint32x4_t masks = { 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 
+        uint32x4_t m1 = { 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 
                              0x00FFFFFF };
-        uint32x4_t masks2 = { 0xFF000000, 0xFF000000, 0xFF000000, 
+        uint32x4_t m1 = { 0xFF000000, 0xFF000000, 0xFF000000, 
                            0xFF000000 };			
         uint32x4_t ps = { display[x], display[x+1], display[x+2],
                          display[x+3]};
-        uint32x4_t res = vorrq_u32(vmulq_u32(ps, masks), masks2);
-        memcpy(pixels+x, &res, sizeof(int)*4);
-        #elif __x86_64__
-				uint8_t pixel = display[x];
-				pixels[x] = (0x00FFFFFF  * pixel) | 0xFF000000;
-        #else
-				uint8_t pixel = display[x];
-				pixels[x] = (0x00FFFFFF  * pixel) | 0xFF000000;
-        #endif
+        uint32x4_t res = vorrq_u32(vmulq_u32(ps, m1), m2);
+        memcpy(pixels+x, &res, sizeof(uint32_t)*4);
 			}
+      // #elif __x86_64__
+      // for(size_t x = 0; x < 2048; x+=4) {
+      // __m256i m1 = { 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF};
+      // __m256i m2 = { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 };
+      // __m256i ps  = { display[x], display[x+1], display[x+2], display[x+3] };
+      // __m256i res = _mm256_mul_epi32(ps, m1);
+      // res = _mm256_mul_epi32(res, m2);
+      //
+      // memcpy(pixels+x, &res, sizeof(uint32_t)*4);
+      // pixels[x] = (0x00FFFFFF  * pixel) | 0xFF000000;
+      // }
+      #else
+      for(size_t x = 0; x < 2048; x++) {
+        uint8_t pixel = display[x];
+        pixels[x] = (0x00FFFFFF  * pixel) | 0xFF000000;
+      }
+      #endif
 			/* update the new pixel layout to the texture */
 			SDL_UpdateTexture(sdlTexture, NULL, pixels, 64 * sizeof(uint32_t));
 			/* clear old layout */
