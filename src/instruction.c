@@ -1,11 +1,4 @@
-#include <SDL2/SDL_events.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <time.h>
-
-#include "cpu.h"
+#include "instructions.h"
 
 uint8_t cls(void) { 
 	if(mode == 2) { 
@@ -20,7 +13,7 @@ uint8_t cls(void) {
 	return 0;
 }
 
-uint8_t ret() {
+uint8_t ret(void) {
 	/* point stack pointer to the previous value, set program counter to said previous value */
 	if(mode == 2) {
 		fprintf(stdout,"RET\n");
@@ -32,7 +25,7 @@ uint8_t ret() {
 	pc+=2;
 	return 0;
 }
-uint8_t old_jump() {
+uint8_t old_jump(void) {
 	/* set the program counter to the last 3 nibbles of opcode */
 	if(mode == 2) {
 		fprintf(stdout,"SYS 0x%X\n", opcode & 0x0FFF);
@@ -42,7 +35,7 @@ uint8_t old_jump() {
 	pc = opcode & 0x0FFF;
 	return 0;
 }
-uint8_t jump(void) {
+uint8_t jump() {
 	/* set the program counter to the last 3 nibbles of opcode */
 	if(mode == 2) {
 		fprintf(stdout,"JMP 0x%x\n", opcode & 0x0FFF);
@@ -53,7 +46,7 @@ uint8_t jump(void) {
 	return 0;
 }
 
-uint8_t call(void) {
+uint8_t call() {
 	/* set value of address of stack pointer to program counter 
 	 * (used in ret() to return to calling function), 
 	 * increment stack pointer (so the calling function address isn't overwritten). */
@@ -69,7 +62,7 @@ uint8_t call(void) {
 	return 0;
 }
 
-uint8_t ske(void) {
+uint8_t ske() {
 	if(mode == 2) {
 		fprintf(stdout,"SKE r%d,%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		pc+=2;
@@ -82,7 +75,7 @@ uint8_t ske(void) {
 	return 0;
 }
 
-uint8_t skne(void) {
+uint8_t skne() {
 		if(mode == 2) {
 		fprintf(stdout,"SKNE r%d,%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		pc+=2;
@@ -95,7 +88,7 @@ uint8_t skne(void) {
 	 return 0;
 }
 
-uint8_t skre(void) { 
+uint8_t skre() { 
 	if(mode == 2) {
 		fprintf(stdout,"SKRE r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -108,7 +101,7 @@ uint8_t skre(void) {
 	return 0;
 }
 
-uint8_t load(void) {
+uint8_t load() {
 	if(mode == 2) {
 		fprintf(stdout,"LOAD r%d,%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		pc+=2;
@@ -119,7 +112,7 @@ uint8_t load(void) {
 	return 0;
 }
 
-uint8_t add(void) {
+uint8_t add() {
 	if(mode == 2) {
 		fprintf(stdout,"ADD r%d,%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		pc+=2;
@@ -130,7 +123,7 @@ uint8_t add(void) {
 	return 0;
 }
 
-uint8_t move(void) {
+uint8_t move() {
 	if(mode == 2) {
 		fprintf(stdout,"MOVE r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -141,7 +134,7 @@ uint8_t move(void) {
 	return 0;
 }
 
-uint8_t or(void) {
+uint8_t or() {
 	if(mode == 2) {
 		fprintf(stdout,"OR r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -152,7 +145,7 @@ uint8_t or(void) {
 	return 0;
 }
 
-uint8_t and(void) {
+uint8_t and() {
 	if(mode == 2) {
 		fprintf(stdout,"AND r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -163,7 +156,7 @@ uint8_t and(void) {
 	return 0;
 }
 
-uint8_t xor(void) {
+uint8_t xor() {
 	if(mode == 2) {
 		fprintf(stdout,"XOR r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -173,7 +166,7 @@ uint8_t xor(void) {
 	pc+=2;
 	return 0;
 }
-uint8_t addr(void) {
+uint8_t addr() {
 	if(mode == 2) {
 		fprintf(stdout,"ADDR r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -187,7 +180,7 @@ uint8_t addr(void) {
 	pc+=2;
 	return 0;
 }
-uint8_t sub(void) {
+uint8_t sub() {
 	if(mode == 2) {
 		fprintf(stdout,"SUB r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -205,7 +198,7 @@ uint8_t sub(void) {
 	return 0;
 }
 
-uint8_t shr(void) {
+uint8_t shr() {
 	if(mode == 2) {
 		fprintf(stdout,"SHR r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -222,7 +215,7 @@ uint8_t shr(void) {
 	return 0;
 }
 
-uint8_t subr(void) {
+uint8_t subr() {
 	if(mode == 2) {
 		fprintf(stdout,"SUBR r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -242,7 +235,7 @@ uint8_t subr(void) {
 	return 0;
 }
 
-uint8_t shl(void) { 
+uint8_t shl() { 
 	if(mode == 2) {
 		fprintf(stdout,"SHL r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -260,7 +253,7 @@ uint8_t shl(void) {
 	return 0;
 }
 
-uint8_t skrne(void) {
+uint8_t skrne() {
 	if(mode == 2) {
 		fprintf(stdout,"SKRNE r%d,r%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		pc+=2;
@@ -275,7 +268,7 @@ uint8_t skrne(void) {
 	return 0;
 }
 
-uint8_t loadi(void) {
+uint8_t loadi() {
 	if(mode == 2) {
 		fprintf(stdout,"LOADI %d\n", opcode & 0x0FFF);
 		pc+=2;
@@ -286,7 +279,7 @@ uint8_t loadi(void) {
 	return 0;
 }
 
-uint8_t jumpi(void) {
+uint8_t jumpi() {
 	if(mode == 2) {
 		fprintf(stdout,"JUMPI %d\n", opcode & 0x0FFF);
 		pc+=2;
@@ -296,7 +289,7 @@ uint8_t jumpi(void) {
 	return 0;
 }
 
-uint8_t rnd(void) {
+uint8_t rnd() {
 	if(mode == 2) {
 		fprintf(stdout, "RAND r%d,%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		pc+=2;
@@ -307,7 +300,8 @@ uint8_t rnd(void) {
 	return 0;
 }
 
-uint8_t drw(void) {
+uint8_t drw() {
+
 	if(mode == 2) {
 		fprintf(stdout, "DRAW r%d,r%d,%d\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, (opcode & 0x000F));
 		pc+=2;
@@ -340,7 +334,7 @@ uint8_t drw(void) {
 	return 0;
 }
 
-uint8_t skpr(void) {
+uint8_t skpr() {
 	if(mode == 2) {
 		fprintf(stdout, "SKPR r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -353,7 +347,7 @@ uint8_t skpr(void) {
 	return 0;
 }
 
-uint8_t skup(void) {
+uint8_t skup() {
 	if(mode == 2) {
 		fprintf(stdout, "SKUP r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -366,7 +360,7 @@ uint8_t skup(void) {
 	return 0;
 }
 
-uint8_t moved(void) {
+uint8_t moved() {
 	if(mode == 2) {
 		fprintf(stdout, "MOVED r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -377,7 +371,7 @@ uint8_t moved(void) {
 	return 0;
 }
 
-uint8_t keyd(void) {
+uint8_t keyd() {
 	if(mode == 2) {
 		fprintf(stdout, "KEYD r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -400,7 +394,7 @@ uint8_t keyd(void) {
 	return 0;
 }
 
-uint8_t loadd(void) {
+uint8_t loadd() {
 	if(mode == 2) {
 		fprintf(stdout, "LOADD r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -411,7 +405,7 @@ uint8_t loadd(void) {
 	return 0;
 }
 
-uint8_t loads(void) {
+uint8_t loads() {
 	if(mode == 2) {
 		fprintf(stdout, "LOADS r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -422,7 +416,7 @@ uint8_t loads(void) {
 	return 0;
 }
 
-uint8_t addi(void) {
+uint8_t addi() {
 	if(mode == 2) {
 		fprintf(stdout, "ADDI r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -437,7 +431,7 @@ uint8_t addi(void) {
 	return 0;
 }
 
-uint8_t ldspr(void) {
+uint8_t ldspr() {
 	if(mode == 2) {
 		fprintf(stdout, "LDSPR r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -449,7 +443,7 @@ uint8_t ldspr(void) {
 	return 0;
 }
 
-uint8_t bcd(void) {
+uint8_t bcd() {
 	if(mode == 2) {
 		fprintf(stdout, "BCD r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -469,7 +463,7 @@ uint8_t bcd(void) {
 	return 0;
 }
 
-uint8_t stor(void) {
+uint8_t stor() {
 	if(mode == 2) {
 		fprintf(stdout, "STOR r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -483,7 +477,7 @@ uint8_t stor(void) {
 	return 0;
 }
 
-uint8_t readr(void) { 
+uint8_t readr() { 
 	if(mode == 2) {
 		fprintf(stdout, "READ r%d\n",(opcode & 0x0F00) >> 8);
 		pc+=2;
@@ -498,29 +492,29 @@ uint8_t readr(void) {
 }
 
 /* Calculations used to minimize memory used by arrays */
-uint8_t opcodes_0(void) { 
-	uint8_t (*opcodes[3])(void) = { NULL, &cls, &ret };
+uint8_t opcodes_0() { 
+	uint8_t (*opcodes[3])() = { NULL, &cls, &ret };
 	(*opcodes[(((opcode & 0x00FF) + 113) >> 3) - 41])();
 	return 0; 
 }
-uint8_t opcodes_8(void) { 
-	uint8_t (*opcodes[15])(void) = { &move, &or, &and, &xor, &addr, 	
+uint8_t opcodes_8() { 
+	uint8_t (*opcodes[15])() = { &move, &or, &and, &xor, &addr, 	
 		&sub, &shr, &subr, NULL, NULL, NULL, NULL, NULL, NULL, 
 		&shl };
 	(*opcodes[(opcode & 0x000F)])();
 	return 0; 
 }
-uint8_t opcodes_e(void) { 
+uint8_t opcodes_e() { 
 
-	uint8_t (*opcodes[5])(void) = { &skpr, NULL, NULL, &skup }; 
+	uint8_t (*opcodes[5])() = { &skpr, NULL, NULL, &skup }; 
 	/* 0x00a1 - 158 = 3.
 	 * 0x009e - 158 = 0.
 	 */
 	(*opcodes[(opcode & 0x00FF) - 158])();
 	return 0; 
 }
-uint8_t opcodes_f(void) { 
-	uint8_t (*opcodes[15])(void) = { NULL, &moved, &keyd, &loadd, &addi, 
+uint8_t opcodes_f() { 
+	uint8_t (*opcodes[15])() = { NULL, &moved, &keyd, &loadd, &addi, 
 		NULL, &ldspr, &bcd, NULL, &loads, NULL, &stor, NULL, &readr};
 	/* ceil(0x00FF / 7) : Closest together array elements */
 	if((opcode & 0x00FF) == 0x18) {
@@ -531,287 +525,3 @@ uint8_t opcodes_f(void) {
 	return 0; 
 }
 void unknown_op(uint16_t opcode) { printf("Unknown opcode: 0x%X\n", opcode); exit(2); }
-
-void initialize(void) {
-
-	pc = 0x200;	// 512, starting address for programs
-	i = 0;
-	sp = 0;
-	delay_timer = 0;
-	sound_timer = 0;
-
-	/* clear stack, keypad, and registers */
-	for(int i = 0; i < 16; ++i) {
-		stack[i] = 0;
-		key[i] = 0;
-		v[i] = 0;
-	}
-
-	/* clear the display */
-	for(int i = 0; i < (64 * 32); ++i) {
-		display[i] = 0;
-	}
-	/* clear memory */
-	for(int i = 0; i <= MEM_LEN - 1; i++) {
-		ram[i] = 0;
-	}
-	
-	/* write the fontset to memory */
-	for(int i = 0; i < 80; i++) {
-		ram[i] = fontset[i];
-	}
-	srand(time(0));
-}
-
-void load_file(char game[30]) {
-	
-	FILE *fp;
-	char *buffer;
-	uint16_t file_size;
-	
-	/* open file in read-binary mode */
-	fprintf(stderr, "[=] Attempting to open file...\n");
-	if((fp = fopen(game, "rb")) == NULL) {
-		perror("[!] Could not read file ");
-		exit(3);
-	}
-	
-	/* get the size of the file */
-	fseek(fp, 0, SEEK_END);
-	file_size = ftell(fp);
-	rewind(fp);
-	
-	/* allocate enough memory to store instructions in file */
-	if((buffer = (char *)malloc(sizeof(char) * file_size)) == NULL) {
-		perror("[!] Could not allocate memory ");
-		exit(3);
-	}
-	
-	fprintf(stderr, "[=] Attempting to read file\n");
-	/* read file into buffer */
-	size_t result = fread(buffer, sizeof(char), file_size, fp);
-	if(result != file_size) {
-		perror("[!] Could not read from file ");
-		exit(3);
-	}
-	
-	/* store buffer in memory */
-	/* If the total memory minus the 512 bytes used by system is greater than the size of the file then read */
-	if((4096-512) > file_size) { 		
-		for(int i = 0; i < file_size; i++) {
-			ram[i+512] = (uint16_t)buffer[i];
-		}
-	}
-	else {
-		fprintf(stderr, "[!] File too large\n");
-		exit(3);
-	}
-	fprintf(stderr, "[+] Successfully read file to buffer.\n");
-	
-	fclose(fp);
-	free(buffer);
-}
-
-uint8_t fetch_execute(uint8_t mode) { 
-	
-	opcode = ram[pc] << 8 | ram[pc+1];
-	if(!opcode) {
-		fprintf(stderr, "EOF\n");
-		exit(0);
-	}
-
-
-	uint8_t (*opcodes_base[20])(void) = { &opcodes_0, &jump, &call, &ske, 
-		&skne, &skre, &load, &add, &opcodes_8, &skrne, &loadi, &jumpi, 
-		&rnd, &drw, &opcodes_e, &opcodes_f  };
-
-	/* Print the address of program counter if disassembly mode */
-	if(mode == 2) {
-		printf("0x%x :- ",cur_addr);
-		cur_addr += 2; 
-	}
-	/* Use the first nibble to determine destination function */
-	(*opcodes_base[(opcode & 0xF000) >> 12])();
-
-	/* Update timer once per cycle */
-	if(delay_timer > 0)
-		--delay_timer;
-	if(sound_timer > 0) {
-		--sound_timer;
-	}
-	else if(!sound_timer) {
-		/* Play Sound */
-	}
-	return 0;
-}
-static inline void usage(char *arg1) {
-	fprintf(stderr, "[!] Usage : %s [ -r ] [file]\n    Usage : %s [ -d ] [ input ] [ output ]\n", arg1, arg1);
-	exit(1);
-}
-
-int main(int argc, char **argv) {
-	
-	SDL_Window *window;
-	SDL_Renderer *renderer;
-	
-	uint32_t pixels[2048];
-	int arg;
-	char file[128];
-
-	if(argc < 2 || argc > 3)
-		usage(argv[0]);
-
-	while ((arg = getopt(argc, argv, "a:d:r:")) != -1)
-		switch(arg)
-		{
-			case 'd':
-				fprintf(stderr, "[+] Mode set to 'Disassemble'.\n");
-				strncpy(file, optarg, sizeof(file) - 2);
-				mode = 2;
-				break;
-			case 'r':
-				fprintf(stderr, "[+] Mode set to 'Run'.\n");
-				strncpy(file, optarg, sizeof(file) - 2);
-				mode = 1;
-				break;
-			case 'a':
-				fprintf(stderr ,"[+] Mode set to 'Assembly'.\n");
-				strncpy(file, optarg, sizeof(file) - 2);
-				mode = 3;
-				break;
-			case '?':
-				if (optopt == 'd' || optopt == 'r' || optopt == 'a') {
-					/* If these don't have any arguments added on */
-					exit(2);
-				}
-				else if (isprint(optopt)) {
-					/* For unknown Options */
-					exit(3);
-				}
-				
-				
-		}
-	fprintf(stderr, "[=] Initializing virtual machine registers and memory...\n");
-	/* Set the initial state (registers, memory, timers, etc) */
-	initialize(); 
-	fprintf(stderr, "[+] Initialized virtual machine.\n");
-	fprintf(stderr, "[=] Loading file into memory...\n");
-	load_file(file);	// read file specified into memory
-	fprintf(stderr, "[+] Successfully loaded file into memory.\n");
-
-	
-	/* Run mode */
-	if(mode == 1) {
-		fprintf(stderr, "[=] Initializing SDL2 library...\n");
-		SDL_Init(SDL_INIT_EVERYTHING);
-		fprintf(stderr, "[+] Initialized SDL2 library.\n");
-		fprintf(stderr, "[=] Starting SDL2 library...\n");
-		window = SDL_CreateWindow("chip8", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
-		if(window == NULL) {
-			fprintf(stderr, "[-] Could not create SDL2 window: %s\n", SDL_GetError());
-			exit(4);
-		}
-		/* renderer to be used as a hook to communicate with SDL2 graphics */
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
-		/* Set resolution to 640 x 480 */
-		SDL_RenderSetLogicalSize(renderer, 640, 480);
-		SDL_Texture* sdlTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
-		fprintf(stderr, "[+] Successfully started SDL2.\n");
-		fprintf(stderr, "[=] Starting Fetch-Execute Cycle...\n");
-		
-		/* Main loop.
-		 *
-		 * After instruction is completed via fetch_execute(),
-		 * SDL will poll for keystrokes
-		 */
-
-	while(1) {
-		fetch_execute(mode);
-		/* e is the SDL2 event */
-		SDL_Event e;
-		while(SDL_PollEvent(&e)) {
-			if(e.type == SDL_QUIT) exit(0);
-
-			/* if a event is a keypress */
-			if(e.type == SDL_KEYDOWN) {
-			/* escape character exits program */
-				if(e.key.keysym.sym == SDLK_ESCAPE)
-					exit(0);
-
-				/* F1 keypress will reset emulator state */
-				if(e.key.keysym.sym == SDLK_F1) {
-					load_file(argv[1]);
-					initialize();
-					continue;
-				}
-				
-				/* check if key presses is on hexpad, if yes then set that key to high */
-				for(int x = 0; x <= 15; ++x) {
-					if(e.key.keysym.sym == keys[x]) {
-						key[x] = 1;
-					}
-				}
-			}
-			/* if a key is no longer being pressed, set it to low */
-			if(e.type == SDL_KEYUP) {
-				for(int x = 0; x <= 15; ++x) {
-					if(e.key.keysym.sym == keys[x]) {
-						key[x] = 0;
-					}
-				}
-			}
-		}
-		/* if draw is set to high then render new pixel layout */
-		if(draw) {
-      /* set draw to false for next cycle */
-			draw = false;
-			/* calculate new pixel layout */
-      #ifdef __arm64__
-			for(int x = 0; x < 2048; x+=4) {
-        uint32x4_t m1 = { 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 
-                             0x00FFFFFF };
-        uint32x4_t m1 = { 0xFF000000, 0xFF000000, 0xFF000000, 
-                           0xFF000000 };			
-        uint32x4_t ps = { display[x], display[x+1], display[x+2],
-                         display[x+3]};
-        uint32x4_t res = vorrq_u32(vmulq_u32(ps, m1), m2);
-        memcpy(pixels+x, &res, sizeof(uint32_t)*4);
-			}
-      // #elif __x86_64__
-      // for(size_t x = 0; x < 2048; x+=4) {
-      // __m256i m1 = { 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF};
-      // __m256i m2 = { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 };
-      // __m256i ps  = { display[x], display[x+1], display[x+2], display[x+3] };
-      // __m256i res = _mm256_mul_epi32(ps, m1);
-      // res = _mm256_mul_epi32(res, m2);
-      //
-      // memcpy(pixels+x, &res, sizeof(uint32_t)*4);
-      // pixels[x] = (0x00FFFFFF  * pixel) | 0xFF000000;
-      // }
-      #else
-      for(size_t x = 0; x < 2048; x++) {
-        uint8_t pixel = display[x];
-        pixels[x] = (0x00FFFFFF  * pixel) | 0xFF000000;
-      }
-      #endif
-			/* update the new pixel layout to the texture */
-			SDL_UpdateTexture(sdlTexture, NULL, pixels, 64 * sizeof(uint32_t));
-			/* clear old layout */
-			SDL_RenderClear(renderer);
-			/* Copy new layout to renderer then use */
-			SDL_RenderCopy(renderer, sdlTexture, NULL, NULL);
-			SDL_RenderPresent(renderer);
-			}
-		}
-	}
-	/* disassembly mode */
-	else if(mode == 2) {
-		fprintf(stderr, "[=] Starting fetch-execute cycle...\n");
-		while((ram[pc] << 8 | ram[pc+1]) != 0x0000) {
-		fetch_execute(mode);
-		}
-	}
-	return 0;
-}
-
-
