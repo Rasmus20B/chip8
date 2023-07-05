@@ -20,7 +20,7 @@ uint8_t cls(void) {
 	return 0;
 }
 
-uint8_t ret() {
+uint8_t ret(void) {
 	/* point stack pointer to the previous value, set program counter to said previous value */
 	if(mode == 2) {
 		fprintf(stdout,"RET\n");
@@ -32,7 +32,7 @@ uint8_t ret() {
 	pc+=2;
 	return 0;
 }
-uint8_t old_jump() {
+uint8_t old_jump(void) {
 	/* set the program counter to the last 3 nibbles of opcode */
 	if(mode == 2) {
 		fprintf(stdout,"SYS 0x%X\n", opcode & 0x0FFF);
@@ -767,11 +767,9 @@ int main(int argc, char **argv) {
 			draw = false;
 			/* calculate new pixel layout */
       #ifdef __arm64__
+      const uint32x4_t m1 = vdupq_n_u32(0x00FFFFFF);
+      const uint32x4_t m2 = vdupq_n_u32(0xFF000000);
 			for(int x = 0; x < 2048; x+=4) {
-        uint32x4_t m1 = { 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 
-                             0x00FFFFFF };
-        uint32x4_t m1 = { 0xFF000000, 0xFF000000, 0xFF000000, 
-                           0xFF000000 };			
         uint32x4_t ps = { display[x], display[x+1], display[x+2],
                          display[x+3]};
         uint32x4_t res = vorrq_u32(vmulq_u32(ps, m1), m2);
